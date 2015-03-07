@@ -28,8 +28,9 @@ class SH_Music extends WP_Widget {
       </li>
 	<?php else :
 	  $username = apply_filters( 'lastfm_username', $instance['lastfm_username'] );
-	  $api_key = apply_filters( 'lastfm_api_key', $instance['lastfm_api_key'] ); 
-	  if ( false == ( $latest = get_transient( 'mylastfmtracks_' . $username ) ) ) {
+	  $api_key = apply_filters( 'lastfm_api_key', $instance['lastfm_api_key'] );
+	  $latest = get_transient( 'mylastfmtracks_' . $username );
+	  if ( false == ( $latest ) ) {
 		$request_url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' . $username . '&limit=' . $amount . '&api_key=' . $api_key;
 		$ch = curl_init();
 		curl_setopt( $ch, CURLOPT_URL, $request_url );
@@ -110,21 +111,21 @@ class SH_Music extends WP_Widget {
       <label for="<?php echo $this->get_field_id( 'widget_title' ); ?>">Title: 
         <input class="widefat" id="<?php echo $this->get_field_id( 'widget_title' ); ?>" 
                name="<?php echo $this->get_field_name( 'widget_title' ); ?>" type="text" 
-               value="<?php echo attribute_escape( $title ); ?>" />
+               value="<?php echo esc_attr( $title ); ?>" />
       </label>
      </p>
      <p>
       <label for="<?php echo $this->get_field_id( 'lastfm_username' ); ?>">Last.fm Username: 
         <input class="widefat" id="<?php echo $this->get_field_id( 'lastfm_username' ); ?>" 
                name="<?php echo $this->get_field_name( 'lastfm_username' ); ?>" type="text" 
-               value="<?php echo attribute_escape( $username ); ?>" />
+               value="<?php echo esc_attr( $username ); ?>" />
       </label>
      </p>
      <p>
       <label for="<?php echo $this->get_field_id( 'lastfm_api_key' ); ?>"><a href="http://www.last.fm/api/webauth" target="_blank">API Key:</a> 
         <input class="widefat" id="<?php echo $this->get_field_id( 'lastfm_api_key' ); ?>" 
                name="<?php echo $this->get_field_name( 'lastfm_api_key' ); ?>" type="text" 
-               value="<?php echo attribute_escape( $api_key ); ?>" />
+               value="<?php echo esc_attr( $api_key ); ?>" />
       </label>
      </p>
      <p>
