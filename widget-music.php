@@ -15,6 +15,7 @@ class SH_Music extends WP_Widget {
     $title = empty( $instance['widget_title'] ) ? 'Listening to This' : apply_filters( 'widget_title', $instance['widget_title'] );
 	$amount = empty( $instance['display_amount'] ) ? '3' : apply_filters( 'display_amount', $instance['display_amount'] );
 	$latest = '';
+	$error = 'I\'m not listening to anything at the moment, unfortunately.';
 	echo ( isset( $before_widget ) ? $before_widget: '' );
 	
 	if ( !empty( $title ) )
@@ -43,7 +44,7 @@ class SH_Music extends WP_Widget {
 	  }
 	  if ( $latest == 'broken' ) : ?>
 		<li class="media">
-		  <p class="tight">I'm not listening to anything at the moment.</p>
+		  <p class="tight"><?php echo $error; ?></p>
 		</li>
 	  <?php
 	  else :
@@ -64,7 +65,7 @@ class SH_Music extends WP_Widget {
 			?>
             <li class="media">
               <div class="pull-left">
-              <?php if ( $albumArt[$i] != "" ) : // Test if there's album art. If not, use default ?>
+              <?php if ( isset( $albumArt[$i] ) ) : // Test if there's album art. If not, use default ?>
                 <img class="media-object" src="<?php echo esc_attr( $albumArt[$i] ); ?>"  width="64px" height="64px" alt="Album Art for <?php echo esc_attr( $title ); ?>" />
               <?php else : ?>
                 <div class="media-object no-album-art" title="No Album Art Available">
@@ -91,7 +92,7 @@ class SH_Music extends WP_Widget {
 		  endforeach;
 		else : ?>
           <li class="media">
-            <p>I'm not listening to anything at the moment, unfortunately.</p>
+            <p class="tight"><?php echo $error; ?></p>
           </li>	
     	<?php endif; ?>
 	  <?php endif; ?>
