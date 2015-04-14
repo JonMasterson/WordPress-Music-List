@@ -6,7 +6,7 @@
 class SH_Music extends WP_Widget {
  
   public function __construct() {
-      $widget_ops = array( 'classname' => 'Music List', 'description' => 'Displays a list of recenty played music from Last.fm or Spotify.' );
+      $widget_ops = array( 'classname' => '', 'description' => 'Displays a list of recenty played music from Last.fm or Spotify.' );
       $this->WP_Widget( 'SH_Music', 'Music List', $widget_ops );
   }
   
@@ -65,7 +65,7 @@ class SH_Music extends WP_Widget {
 			?>
             <li class="media">
               <div class="pull-left">
-              <?php if ( isset( $albumArt[$i] ) ) : // Test if there's album art. If not, use default ?>
+              	<?php if ( $albumArt[$i]!= '' ) : // If no album art, use default ?>
                 <img class="media-object" src="<?php echo esc_attr( $albumArt[$i] ); ?>"  width="64px" height="64px" alt="Album Art for <?php echo esc_attr( $title ); ?>" />
               <?php else : ?>
                 <div class="media-object no-album-art" title="No Album Art Available">
