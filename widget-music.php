@@ -32,7 +32,7 @@ class SH_Music extends WP_Widget {
 	  $api_key = apply_filters( 'lastfm_api_key', $instance['lastfm_api_key'] );
 	  $latest = get_transient( 'mylastfmtracks_' . $username );
 	  if ( false == ( $latest ) ) {
-		$request_url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' . $username . '&limit=' . $amount . '&api_key=' . $api_key;
+		$request_url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' . $username . '&api_key=' . $api_key . '&limit=' . $amount;
 		$ch = curl_init();
 		curl_setopt( $ch, CURLOPT_URL, $request_url );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
