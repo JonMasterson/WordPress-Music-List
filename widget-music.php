@@ -32,7 +32,7 @@ class SH_Music extends WP_Widget {
 	  $api_key = apply_filters( 'lastfm_api_key', $instance['lastfm_api_key'] );
 	  $latest = get_transient( 'mylastfmtracks_' . $username );
 	  if ( false == ( $latest ) ) {
-		$request_url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' . $username . '&api_key=' . $api_key . '&limit=' . $amount;
+		$request_url = 'http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' . $username . '&limit=' . $amount . '&api_key=' . $api_key . '&format=json';
 		$ch = curl_init();
 		curl_setopt( $ch, CURLOPT_URL, $request_url );
 		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -48,25 +48,23 @@ class SH_Music extends WP_Widget {
 		</li>
 	  <?php
 	  else :
-		$latest = new SimpleXMLElement( $latest );
-		libxml_use_internal_errors( true );
-		libxml_clear_errors();
-		if ( $latest->xpath( '//track' ) ) :
+		$latest = json_decode($latest, true);
+		if ( $latest['recenttracks']['track'] ) :
 		  $i = 0;
-		  foreach ( $latest->xpath( '//track' ) as $track ) :
+		  foreach ( $latest['recenttracks']['track'] as $track ) :
 			// setup variables
-			$title = $track->xpath( '//name' );
-			$title = $title[$i]; // track title
-			$nowPlaying = $track->xpath( '//track/@nowplaying' ); // currently playing
-			$datePlayed = $track->xpath( '//date/@uts' ); // time played
-			$albumArt = $track->xpath( '//image[@size="medium"]' ); // album art
-			$artist = $track->xpath( '//artist' ); // album artist
-			date_default_timezone_set("America/New_York");
-			?>
+			$artist = ( isset( $track['artist']['#text'] ) ) ? $track['artist']['#text'] : ''; // artist name
+			$title = ( isset( $track['name'] ) ) ? $track['name'] : ''; // track title
+			$track_url = ( isset( $track['url'] ) ) ? $track['url'] : ''; // track url on Last.fm
+			$albumArt = ( isset( $track['image'][1]['#text'] ) ) ? $track['image'][1]['#text'] : ''; // medium-sized album art
+			$nowPlaying = ( isset( $track['@attr']['nowplaying'] ) ) ? true : ''; // if true, track is currently playing
+			$datePlayed = ( isset( $track['date']['uts'] ) ) ? $track['date']['uts'] : ''; // time played
+			date_default_timezone_set("America/New_York"); // set your time zone here
+	  ?>
             <li class="media">
               <div class="pull-left">
-              	<?php if ( $albumArt[$i]!= '' ) : // If no album art, use default ?>
-                <img class="media-object" src="<?php echo esc_attr( $albumArt[$i] ); ?>"  width="64px" height="64px" alt="Album Art for <?php echo esc_attr( $title ); ?>" />
+              	<?php if ( $albumArt != '' ) : // If no album art, use default ?>
+                <img class="media-object" src="<?php echo esc_attr( $albumArt ); ?>"  width="64px" height="64px" alt="Album Art for <?php echo esc_attr( $title ); ?>" />
               <?php else : ?>
                 <div class="media-object no-album-art" title="No Album Art Available">
                   <span class="now-playing"><i class="icon-type-music"></i></span>
@@ -74,13 +72,13 @@ class SH_Music extends WP_Widget {
               <?php endif; ?>
               </div>
               <div class="media-body">
-                <h5 class="media-heading"><?php echo $artist[$i]; ?></h5>
+                <h5 class="media-heading"><?php echo $artist; ?></h5>
                 <small>
-                  <p class="tight"><?php echo $title; ?><br />
-                  <?php if ( isset( $nowPlaying[$i] ) ) : // Test if song is playing right now. ?>
+                  <p class="tight"><a href="<?php echo $track_url; ?>"><?php echo $title; ?></a><br />
+                  <?php if ( $nowPlaying == true ) : // Test if song is playing right now. ?>
                     <span class="text-muted">Listening now</span>
                   <?php else : ?>
-                    <span class="text-muted"><?php echo human_time_diff( $datePlayed[$i] ); ?> ago</span>
+                    <span class="text-muted"><?php echo human_time_diff( $datePlayed ); ?> ago</span>
                   <?php endif; ?>
                   </p>
                 </small>
