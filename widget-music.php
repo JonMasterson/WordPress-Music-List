@@ -56,7 +56,7 @@ class Music_List extends WP_Widget {
       $ch = curl_init();
       curl_setopt( $ch, CURLOPT_URL, $request_url );
       curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-      curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 20 );
+      curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 4 );
       $tracks = curl_exec( $ch );
       $latest = ( curl_error( $ch ) ) ? 'broken' : $tracks;
       curl_close( $ch );
