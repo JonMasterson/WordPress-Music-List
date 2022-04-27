@@ -52,21 +52,14 @@ class Music_List extends WP_Widget {
       // Setup the Last.fm request
       $username = apply_filters( 'lastfm_username', $instance['lastfm_username'] );
       $api_key = apply_filters( 'lastfm_api_key', $instance['lastfm_api_key'] );
-      // Grab the transient
-      $latest = get_transient( 'mylastfmtracks_' . $username );
-      // If the transient is expired, request latest tracks
-      if ( false == ( $latest ) ) {
-        $request_url = 'https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' . $username . '&limit=' . $amount . '&api_key=' . $api_key . '&format=json';
-        $ch = curl_init();
-        curl_setopt( $ch, CURLOPT_URL, $request_url );
-        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-        curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 20 );
-        $tracks = curl_exec( $ch );
-        $latest = ( curl_error( $ch ) ) ? 'broken' : $tracks;
-        curl_close( $ch );
-        // We set the transient to expire every 2 minutes
-        set_transient( 'mylastfmtracks_' . $username, $latest, 120 ); 
-      }
+      $request_url = 'https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=' . $username . '&limit=' . $amount . '&api_key=' . $api_key . '&format=json';
+      $ch = curl_init();
+      curl_setopt( $ch, CURLOPT_URL, $request_url );
+      curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+      curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT, 20 );
+      $tracks = curl_exec( $ch );
+      $latest = ( curl_error( $ch ) ) ? 'broken' : $tracks;
+      curl_close( $ch );
 
       // If there's an error, output a message
       if ( $latest == 'broken' ) : ?>
